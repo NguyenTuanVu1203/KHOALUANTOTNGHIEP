@@ -1,0 +1,109 @@
+.title_table{
+  width: 20%;
+}
+.input_table{
+  width: 50%;
+}
+.title_page{
+  font-weight: bold;
+}
+.title_page::after{
+  content: "";
+  width: 100px;
+  position: absolute;
+  /* margin: 0 auto; */
+  height: 5px;
+  background-color: #f15412;
+  left: 0;
+  right: 0;
+  bottom: 0px;
+  border-radius: 40px;
+}
+.tr_table{
+  background-color: black;
+  color: white;
+}
+.xoa{
+  color: white;
+  background-color: #ee3500;
+}
+.xoa:hover{
+  font-weight: bold; 
+  border: 1px solid white;
+  color: #ee3500;
+  background-color: white;
+}
+.sua{
+  color: white;
+  background-color: #038018;
+}
+.sua:hover{
+  font-weight: bold; 
+  border: 1px solid white;
+  color: #038018;
+  background-color: white;
+}
+.an{
+  color: white;
+  background-color: red;
+}
+.an:hover{
+  font-weight: bold; 
+  border: 1px solid white;
+  color: red;
+  background-color: white;
+}
+.hien{
+  color: white;
+  background-color: #F49D1A;
+}
+.hien:hover{
+  font-weight: bold; 
+  border: 1px solid white;
+  color: #F49D1A;
+  background-color: white;
+}
+.thongbao{
+  font-weight: bold;
+  color: #9EB23B;
+}
+.vanchuyen{
+  color: white;
+  background-color: #003865;
+}
+.vanchuyen:hover{
+  font-weight: bold; 
+  border: 1px solid white;
+  color: #003865;
+  background-color: white;
+}
+.danhan{
+  color: white;
+  background-color: #F7EC09;
+}
+.danhan:hover{
+  font-weight: bold; 
+  border: 1px solid white;
+  color: #F7EC09;
+  background-color: white;
+}
+.moi{
+  color: white;
+  background-color: red;
+}
+.moi:hover{
+  font-weight: bold; 
+  border: 1px solid white;
+  color: red;
+  background-color: white;
+}
+.baohanh{
+  color: white;
+  background-color: #ff8d05;
+}
+.baohanh:hover{
+  font-weight: bold; 
+  border: 1px solid white;
+  color: #ff8d05;
+  background-color: white;
+}

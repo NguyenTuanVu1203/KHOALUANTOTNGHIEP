@@ -1,0 +1,2800 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+May-19-2004:
+- Changed the <choice> for ElemType_header, moving minOccurs="0" maxOccurs="unbounded" from its elements
+to <choice> itself.
+- Added <choice> for ElemType_trans-unit to allow "any order" for <context-group>, <count-group>, <prop-group>, <note>, and
+<alt-trans>.
+
+Oct-2005
+- updated version info to 1.2
+- equiv-trans attribute to <trans-unit> element
+- merged-trans attribute for <group> element
+- Add the <seg-source> element as optional in the <trans-unit> and <alt-trans> content models, at the same level as <source>
+- Create a new value "seg" for the mtype attribute of the <mrk> element
+- Add mid as an optional attribute for the <alt-trans> element
+
+Nov-14-2005
+- Changed name attribute for <context-group> from required to optional
+- Added extension point at <xliff>
+
+Jan-9-2006
+- Added alttranstype type attribute to <alt-trans>, and values
+
+Jan-10-2006
+- Corrected error with overwritten purposeValueList
+- Corrected name="AttrType_Version",  attribute should have been "name"
+-->
+<schema xmlns:xlf="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="urn:oasis:names:tc:xliff:document:1.2" xml:lang="en">
+	<!-- Import for xml:lang and xml:space -->
+	<import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd" />
+	<!-- Attributes Lists -->
+	<simpleType name="XTend">
+		<restriction base="xsd:string">
+			<pattern value="x-[^\s]+" />
+		</restriction>
+	</simpleType>
+	<simpleType name="context-typeValueList">
+		<annotation>
+			<documentation>
+				Values for the attribute 'context-type'.
+			</documentation>
+		</annotation>
+		<restriction base="xsd:string">
+			<enumeration value="database">
+				<annotation>
+					<documentation>
+						Indicates a database content.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="element">
+				<annotation>
+					<documentation>
+						Indicates the content of an element within an XML document.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="elementtitle">
+				<annotation>
+					<documentation>
+						Indicates the name of an element within an XML document.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="linenumber">
+				<annotation>
+					<documentation>
+						Indicates the line number from the sourcefile (see context-type="sourcefile") where the &lt;source&gt; is found.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="numparams">
+				<annotation>
+					<documentation>
+						Indicates a the number of parameters contained within the &lt;source&gt;.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="paramnotes">
+				<annotation>
+					<documentation>
+						Indicates notes pertaining to the parameters in the &lt;source&gt;.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="record">
+				<annotation>
+					<documentation>
+						Indicates the content of a record within a database.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="recordtitle">
+				<annotation>
+					<documentation>
+						Indicates the name of a record within a database.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="sourcefile">
+				<annotation>
+					<documentation>
+						Indicates the original source file in the case that multiple files are merged to form the original file from which the XLIFF file is created. This differs from the original &lt;file&gt; attribute in that this sourcefile is one of many that make up that file.
+					</documentation>
+				</annotation>
+			</enumeration>
+		</restriction>
+	</simpleType>
+	<simpleType name="count-typeValueList">
+		<annotation>
+			<documentation>
+				Values for the attribute 'count-type'.
+			</documentation>
+		</annotation>
+		<restriction base="xsd:NMTOKEN">
+			<enumeration value="num-usages">
+				<annotation>
+					<documentation>
+						Indicates the count units are items that are used X times in a certain context; example: this is a reusable text unit which is used 42 times in other texts.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="repetition">
+				<annotation>
+					<documentation>
+						Indicates the count units are translation units existing already in the same document.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="total">
+				<annotation>
+					<documentation>
+						Indicates a total count.
+					</documentation>
+				</annotation>
+			</enumeration>
+		</restriction>
+	</simpleType>
+	<simpleType name="InlineDelimitersValueList">
+		<annotation>
+			<documentation>
+				Values for the attribute 'ctype' when used other elements than &lt;ph&gt; or &lt;x&gt;.
+			</documentation>
+		</annotation>
+		<restriction base="xsd:NMTOKEN">
+			<enumeration value="bold">
+				<annotation>
+					<documentation>
+						Indicates a run of bolded text.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="italic">
+				<annotation>
+					<documentation>
+						Indicates a run of text in italics.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="underlined">
+				<annotation>
+					<documentation>
+						Indicates a run of underlined text.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="link">
+				<annotation>
+					<documentation>
+						Indicates a run of hyper-text.
+					</documentation>
+				</annotation>
+			</enumeration>
+		</restriction>
+	</simpleType>
+	<simpleType name="InlinePlaceholdersValueList">
+		<annotation>
+			<documentation>
+				Values for the attribute 'ctype' when used with &lt;ph&gt; or &lt;x&gt;.
+			</documentation>
+		</annotation>
+		<restriction base="xsd:NMTOKEN">
+			<enumeration value="image">
+				<annotation>
+					<documentation>
+						Indicates a inline image.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="pb">
+				<annotation>
+					<documentation>
+						Indicates a page break.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="lb">
+				<annotation>
+					<documentation>
+						Indicates a line break.
+					</documentation>
+				</annotation>
+			</enumeration>
+		</restriction>
+	</simpleType>
+	<simpleType name="mime-typeValueList">
+		<restriction base="xsd:string">
+			<pattern value="(text|multipart|message|application|image|audio|video|model)(/.+)*" />
+		</restriction>
+	</simpleType>
+	<simpleType name="datatypeValueList">
+		<annotation>
+			<documentation>
+				Values for the attribute 'datatype'.
+			</documentation>
+		</annotation>
+		<restriction base="xsd:NMTOKEN">
+			<enumeration value="asp">
+				<annotation>
+					<documentation>
+						Indicates Active Server Page data.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="c">
+				<annotation>
+					<documentation>
+						Indicates C source file data.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="cdf">
+				<annotation>
+					<documentation>
+						Indicates Channel Definition Format (CDF) data.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="cfm">
+				<annotation>
+					<documentation>
+						Indicates ColdFusion data.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="cpp">
+				<annotation>
+					<documentation>
+						Indicates C++ source file data.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="csharp">
+				<annotation>
+					<documentation>
+						Indicates C-Sharp data.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="cstring">
+				<annotation>
+					<documentation>
+						Indicates strings from C, ASM, and driver files data.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="csv">
+				<annotation>
+					<documentation>
+						Indicates comma-separated values data.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="database">
+				<annotation>
+					<documentation>
+						Indicates database data.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="documentfooter">
+				<annotation>
+					<documentation>
+						Indicates portions of document that follows data and contains metadata.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="documentheader">
+				<annotation>
+					<documentation>
+						Indicates portions of document that precedes data and contains metadata.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="filedialog">
+				<annotation>
+					<documentation>
+						Indicates data from standard UI file operations dialogs (e.g., Open, Save, Save As, Export, Import).
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="form">
+				<annotation>
+					<documentation>
+						Indicates standard user input screen data.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="html">
+				<annotation>
+					<documentation>
+						Indicates HyperText Markup Language (HTML) data - document instance.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="htmlbody">
+				<annotation>
+					<documentation>
+						Indicates content within an HTML document’s &lt;body&gt; element.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="ini">
+				<annotation>
+					<documentation>
+						Indicates Windows INI file data.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="interleaf">
+				<annotation>
+					<documentation>
+						Indicates Interleaf data.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="javaclass">
+				<annotation>
+					<documentation>
+						Indicates Java source file data (extension '.java').
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="javapropertyresourcebundle">
+				<annotation>
+					<documentation>
+						Indicates Java property resource bundle data.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="javalistresourcebundle">
+				<annotation>
+					<documentation>
+						Indicates Java list resource bundle data.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="javascript">
+				<annotation>
+					<documentation>
+						Indicates JavaScript source file data.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="jscript">
+				<annotation>
+					<documentation>
+						Indicates JScript source file data.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="layout">
+				<annotation>
+					<documentation>
+						Indicates information relating to formatting.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="lisp">
+				<annotation>
+					<documentation>
+						Indicates LISP source file data.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="margin">
+				<annotation>
+					<documentation>
+						Indicates information relating to margin formats.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="menufile">
+				<annotation>
+					<documentation>
+						Indicates a file containing menu.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="messagefile">
+				<annotation>
+					<documentation>
+						Indicates numerically identified string table.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="mif">
+				<annotation>
+					<documentation>
+						Indicates Maker Interchange Format (MIF) data.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="mimetype">
+				<annotation>
+					<documentation>
+						Indicates that the datatype attribute value is a MIME Type value and is defined in the mime-type attribute.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="mo">
+				<annotation>
+					<documentation>
+						Indicates GNU Machine Object data.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="msglib">
+				<annotation>
+					<documentation>
+						Indicates Message Librarian strings created by Novell's Message Librarian Tool.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="pagefooter">
+				<annotation>
+					<documentation>
+						Indicates information to be displayed at the bottom of each page of a document.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="pageheader">
+				<annotation>
+					<documentation>
+						Indicates information to be displayed at the top of each page of a document.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="parameters">
+				<annotation>
+					<documentation>
+						Indicates a list of property values (e.g., settings within INI files or preferences dialog).
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="pascal">
+				<annotation>
+					<documentation>
+						Indicates Pascal source file data.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="php">
+				<annotation>
+					<documentation>
+						Indicates Hypertext Preprocessor data.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="plaintext">
+				<annotation>
+					<documentation>
+						Indicates plain text file (no formatting other than, possibly, wrapping).
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="po">
+				<annotation>
+					<documentation>
+						Indicates GNU Portable Object file.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="report">
+				<annotation>
+					<documentation>
+						Indicates dynamically generated user defined document. e.g. Oracle Report, Crystal Report, etc.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="resources">
+				<annotation>
+					<documentation>
+						Indicates Windows .NET binary resources.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="resx">
+				<annotation>
+					<documentation>
+						Indicates Windows .NET Resources.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="rtf">
+				<annotation>
+					<documentation>
+						Indicates Rich Text Format (RTF) data.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="sgml">
+				<annotation>
+					<documentation>
+						Indicates Standard Generalized Markup Language (SGML) data - document instance.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="sgmldtd">
+				<annotation>
+					<documentation>
+						Indicates Standard Generalized Markup Language (SGML) data - Document Type Definition (DTD).
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="svg">
+				<annotation>
+					<documentation>
+						Indicates Scalable Vector Graphic (SVG) data.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="vbscript">
+				<annotation>
+					<documentation>
+						Indicates VisualBasic Script source file.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="warning">
+				<annotation>
+					<documentation>
+						Indicates warning message.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="winres">
+				<annotation>
+					<documentation>
+						Indicates Windows (Win32) resources (i.e. resources extracted from an RC script, a message file, or a compiled file).
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="xhtml">
+				<annotation>
+					<documentation>
+						Indicates Extensible HyperText Markup Language (XHTML) data - document instance.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="xml">
+				<annotation>
+					<documentation>
+						Indicates Extensible Markup Language (XML) data - document instance.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="xmldtd">
+				<annotation>
+					<documentation>
+						Indicates Extensible Markup Language (XML) data - Document Type Definition (DTD).
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="xsl">
+				<annotation>
+					<documentation>
+						Indicates Extensible Stylesheet Language (XSL) data.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="xul">
+				<annotation>
+					<documentation>
+						Indicates XUL elements.
+					</documentation>
+				</annotation>
+			</enumeration>
+		</restriction>
+	</simpleType>
+	<simpleType name="mtypeValueList">
+		<annotation>
+			<documentation>
+				Values for the attribute 'mtype'.
+			</documentation>
+		</annotation>
+		<restriction base="xsd:NMTOKEN">
+			<enumeration value="abbrev">
+				<annotation>
+					<documentation>
+						Indicates the marked text is an abbreviation.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="abbreviated-form">
+				<annotation>
+					<documentation>
+						ISO-12620 2.1.8: A term resulting from the omission of any part of the full term while designating the same concept.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="abbreviation">
+				<annotation>
+					<documentation>
+						ISO-12620 2.1.8.1: An abbreviated form of a simple term resulting from the omission of some of its letters (e.g. 'adj.' for 'adjective').
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="acronym">
+				<annotation>
+					<documentation>
+						ISO-12620 2.1.8.4: An abbreviated form of a term made up of letters from the full form of a multiword term strung together into a sequence pronounced only syllabically (e.g. 'radar' for 'radio detecting and ranging').
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="appellation">
+				<annotation>
+					<documentation>
+						ISO-12620: A proper-name term, such as the name of an agency or other proper entity.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="collocation">
+				<annotation>
+					<documentation>
+						ISO-12620 2.1.18.1: A recurrent word combination characterized by cohesion in that the components of the collocation must co-occur within an utterance or series of utterances, even though they do not necessarily have to maintain immediate proximity to one another.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="common-name">
+				<annotation>
+					<documentation>
+						ISO-12620 2.1.5: A synonym for an international scientific term that is used in general discourse in a given language.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="datetime">
+				<annotation>
+					<documentation>
+						Indicates the marked text is a date and/or time.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="equation">
+				<annotation>
+					<documentation>
+						ISO-12620 2.1.15: An expression used to represent a concept based on a statement that two mathematical expressions are, for instance, equal as identified by the equal sign (=), or assigned to one another by a similar sign.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="expanded-form">
+				<annotation>
+					<documentation>
+						ISO-12620 2.1.7: The complete representation of a term for which there is an abbreviated form.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="formula">
+				<annotation>
+					<documentation>
+						ISO-12620 2.1.14: Figures, symbols or the like used to express a concept briefly, such as a mathematical or chemical formula.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="head-term">
+				<annotation>
+					<documentation>
+						ISO-12620 2.1.1: The concept designation that has been chosen to head a terminological record.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="initialism">
+				<annotation>
+					<documentation>
+						ISO-12620 2.1.8.3: An abbreviated form of a term consisting of some of the initial letters of the words making up a multiword term or the term elements making up a compound term when these letters are pronounced individually (e.g. 'BSE' for 'bovine spongiform encephalopathy').
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="international-scientific-term">
+				<annotation>
+					<documentation>
+						ISO-12620 2.1.4: A term that is part of an international scientific nomenclature as adopted by an appropriate scientific body.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="internationalism">
+				<annotation>
+					<documentation>
+						ISO-12620 2.1.6: A term that has the same or nearly identical orthographic or phonemic form in many languages.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="logical-expression">
+				<annotation>
+					<documentation>
+						ISO-12620 2.1.16: An expression used to represent a concept based on mathematical or logical relations, such as statements of inequality, set relationships, Boolean operations, and the like.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="materials-management-unit">
+				<annotation>
+					<documentation>
+						ISO-12620 2.1.17: A unit to track object.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="name">
+				<annotation>
+					<documentation>
+						Indicates the marked text is a name.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="near-synonym">
+				<annotation>
+					<documentation>
+						ISO-12620 2.1.3: A term that represents the same or a very similar concept as another term in the same language, but for which interchangeability is limited to some contexts and inapplicable in others.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="part-number">
+				<annotation>
+					<documentation>
+						ISO-12620 2.1.17.2: A unique alphanumeric designation assigned to an object in a manufacturing system.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="phrase">
+				<annotation>
+					<documentation>
+						Indicates the marked text is a phrase.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="phraseological-unit">
+				<annotation>
+					<documentation>
+						ISO-12620 2.1.18: Any group of two or more words that form a unit, the meaning of which frequently cannot be deduced based on the combined sense of the words making up the phrase.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="protected">
+				<annotation>
+					<documentation>
+						Indicates the marked text should not be translated.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="romanized-form">
+				<annotation>
+					<documentation>
+						ISO-12620 2.1.12: A form of a term resulting from an operation whereby non-Latin writing systems are converted to the Latin alphabet.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="seg">
+				<annotation>
+					<documentation>
+						Indicates that the marked text represents a segment.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="set-phrase">
+				<annotation>
+					<documentation>
+						ISO-12620 2.1.18.2: A fixed, lexicalized phrase.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="short-form">
+				<annotation>
+					<documentation>
+						ISO-12620 2.1.8.2: A variant of a multiword term that includes fewer words than the full form of the term (e.g. 'Group of Twenty-four' for 'Intergovernmental Group of Twenty-four on International Monetary Affairs').
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="sku">
+				<annotation>
+					<documentation>
+						ISO-12620 2.1.17.1: Stock keeping unit, an inventory item identified by a unique alphanumeric designation assigned to an object in an inventory control system.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="standard-text">
+				<annotation>
+					<documentation>
+						ISO-12620 2.1.19: A fixed chunk of recurring text.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="symbol">
+				<annotation>
+					<documentation>
+						ISO-12620 2.1.13: A designation of a concept by letters, numerals, pictograms or any combination thereof.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="synonym">
+				<annotation>
+					<documentation>
+						ISO-12620 2.1.2: Any term that represents the same or a very similar concept as the main entry term in a term entry.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="synonymous-phrase">
+				<annotation>
+					<documentation>
+						ISO-12620 2.1.18.3: Phraseological unit in a language that expresses the same semantic content as another phrase in that same language.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="term">
+				<annotation>
+					<documentation>
+						Indicates the marked text is a term.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="transcribed-form">
+				<annotation>
+					<documentation>
+						ISO-12620 2.1.11: A form of a term resulting from an operation whereby the characters of one writing system are represented by characters from another writing system, taking into account the pronunciation of the characters converted.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="transliterated-form">
+				<annotation>
+					<documentation>
+						ISO-12620 2.1.10: A form of a term resulting from an operation whereby the characters of an alphabetic writing system are represented by characters from another alphabetic writing system.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="truncated-term">
+				<annotation>
+					<documentation>
+						ISO-12620 2.1.8.5: An abbreviated form of a term resulting from the omission of one or more term elements or syllables (e.g. 'flu' for 'influenza').
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="variant">
+				<annotation>
+					<documentation>
+						ISO-12620 2.1.9: One of the alternate forms of a term.
+					</documentation>
+				</annotation>
+			</enumeration>
+		</restriction>
+	</simpleType>
+	<simpleType name="restypeValueList">
+		<annotation>
+			<documentation>
+				Values for the attribute 'restype'.
+			</documentation>
+		</annotation>
+		<restriction base="xsd:NMTOKEN">
+			<enumeration value="auto3state">
+				<annotation>
+					<documentation>
+						Indicates a Windows RC AUTO3STATE control.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="autocheckbox">
+				<annotation>
+					<documentation>
+						Indicates a Windows RC AUTOCHECKBOX control.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="autoradiobutton">
+				<annotation>
+					<documentation>
+						Indicates a Windows RC AUTORADIOBUTTON control.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="bedit">
+				<annotation>
+					<documentation>
+						Indicates a Windows RC BEDIT control.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="bitmap">
+				<annotation>
+					<documentation>
+						Indicates a bitmap, for example a BITMAP resource in Windows.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="button">
+				<annotation>
+					<documentation>
+						Indicates a button object, for example a BUTTON control Windows.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="caption">
+				<annotation>
+					<documentation>
+						Indicates a caption, such as the caption of a dialog box.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="cell">
+				<annotation>
+					<documentation>
+						Indicates the cell in a table, for example the content of the &lt;td&gt; element in HTML.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="checkbox">
+				<annotation>
+					<documentation>
+						Indicates check box object, for example a CHECKBOX control in Windows.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="checkboxmenuitem">
+				<annotation>
+					<documentation>
+						Indicates a menu item with an associated checkbox.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="checkedlistbox">
+				<annotation>
+					<documentation>
+						Indicates a list box, but with a check-box for each item.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="colorchooser">
+				<annotation>
+					<documentation>
+						Indicates a color selection dialog.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="combobox">
+				<annotation>
+					<documentation>
+						Indicates a combination of edit box and listbox object, for example a COMBOBOX control in Windows.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="comboboxexitem">
+				<annotation>
+					<documentation>
+						Indicates an initialization entry of an extended combobox DLGINIT resource block. (code 0x1234).
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="comboboxitem">
+				<annotation>
+					<documentation>
+						Indicates an initialization entry of a combobox DLGINIT resource block (code 0x0403).
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="component">
+				<annotation>
+					<documentation>
+						Indicates a UI base class element that cannot be represented by any other element.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="contextmenu">
+				<annotation>
+					<documentation>
+						Indicates a context menu.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="ctext">
+				<annotation>
+					<documentation>
+						Indicates a Windows RC CTEXT control.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="cursor">
+				<annotation>
+					<documentation>
+						Indicates a cursor, for example a CURSOR resource in Windows.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="datetimepicker">
+				<annotation>
+					<documentation>
+						Indicates a date/time picker.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="defpushbutton">
+				<annotation>
+					<documentation>
+						Indicates a Windows RC DEFPUSHBUTTON control.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="dialog">
+				<annotation>
+					<documentation>
+						Indicates a dialog box.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="dlginit">
+				<annotation>
+					<documentation>
+						Indicates a Windows RC DLGINIT resource block.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="edit">
+				<annotation>
+					<documentation>
+						Indicates an edit box object, for example an EDIT control in Windows.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="file">
+				<annotation>
+					<documentation>
+						Indicates a filename.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="filechooser">
+				<annotation>
+					<documentation>
+						Indicates a file dialog.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="fn">
+				<annotation>
+					<documentation>
+						Indicates a footnote.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="font">
+				<annotation>
+					<documentation>
+						Indicates a font name.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="footer">
+				<annotation>
+					<documentation>
+						Indicates a footer.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="frame">
+				<annotation>
+					<documentation>
+						Indicates a frame object.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="grid">
+				<annotation>
+					<documentation>
+						Indicates a XUL grid element.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="groupbox">
+				<annotation>
+					<documentation>
+						Indicates a groupbox object, for example a GROUPBOX control in Windows.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="header">
+				<annotation>
+					<documentation>
+						Indicates a header item.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="heading">
+				<annotation>
+					<documentation>
+						Indicates a heading, such has the content of &lt;h1&gt;, &lt;h2&gt;, etc. in HTML.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="hedit">
+				<annotation>
+					<documentation>
+						Indicates a Windows RC HEDIT control.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="hscrollbar">
+				<annotation>
+					<documentation>
+						Indicates a horizontal scrollbar.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="icon">
+				<annotation>
+					<documentation>
+						Indicates an icon, for example an ICON resource in Windows.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="iedit">
+				<annotation>
+					<documentation>
+						Indicates a Windows RC IEDIT control.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="keywords">
+				<annotation>
+					<documentation>
+						Indicates keyword list, such as the content of the Keywords meta-data in HTML, or a K footnote in WinHelp RTF.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="label">
+				<annotation>
+					<documentation>
+						Indicates a label object.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="linklabel">
+				<annotation>
+					<documentation>
+						Indicates a label that is also a HTML link (not necessarily a URL).
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="list">
+				<annotation>
+					<documentation>
+						Indicates a list (a group of list-items, for example an &lt;ol&gt; or &lt;ul&gt; element in HTML).
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="listbox">
+				<annotation>
+					<documentation>
+						Indicates a listbox object, for example an LISTBOX control in Windows.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="listitem">
+				<annotation>
+					<documentation>
+						Indicates an list item (an entry in a list).
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="ltext">
+				<annotation>
+					<documentation>
+						Indicates a Windows RC LTEXT control.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="menu">
+				<annotation>
+					<documentation>
+						Indicates a menu (a group of menu-items).
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="menubar">
+				<annotation>
+					<documentation>
+						Indicates a toolbar containing one or more tope level menus.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="menuitem">
+				<annotation>
+					<documentation>
+						Indicates a menu item (an entry in a menu).
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="menuseparator">
+				<annotation>
+					<documentation>
+						Indicates a XUL menuseparator element.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="message">
+				<annotation>
+					<documentation>
+						Indicates a message, for example an entry in a MESSAGETABLE resource in Windows.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="monthcalendar">
+				<annotation>
+					<documentation>
+						Indicates a calendar control.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="numericupdown">
+				<annotation>
+					<documentation>
+						Indicates an edit box beside a spin control.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="panel">
+				<annotation>
+					<documentation>
+						Indicates a catch all for rectangular areas.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="popupmenu">
+				<annotation>
+					<documentation>
+						Indicates a standalone menu not necessarily associated with a menubar.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="pushbox">
+				<annotation>
+					<documentation>
+						Indicates a pushbox object, for example a PUSHBOX control in Windows.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="pushbutton">
+				<annotation>
+					<documentation>
+						Indicates a Windows RC PUSHBUTTON control.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="radio">
+				<annotation>
+					<documentation>
+						Indicates a radio button object.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="radiobuttonmenuitem">
+				<annotation>
+					<documentation>
+						Indicates a menuitem with associated radio button.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="rcdata">
+				<annotation>
+					<documentation>
+						Indicates raw data resources for an application.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="row">
+				<annotation>
+					<documentation>
+						Indicates a row in a table.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="rtext">
+				<annotation>
+					<documentation>
+						Indicates a Windows RC RTEXT control.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="scrollpane">
+				<annotation>
+					<documentation>
+						Indicates a user navigable container used to show a portion of a document.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="separator">
+				<annotation>
+					<documentation>
+						Indicates a generic divider object (e.g. menu group separator).
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="shortcut">
+				<annotation>
+					<documentation>
+						Windows accelerators, shortcuts in resource or property files.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="spinner">
+				<annotation>
+					<documentation>
+						Indicates a UI control to indicate process activity but not progress.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="splitter">
+				<annotation>
+					<documentation>
+						Indicates a splitter bar.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="state3">
+				<annotation>
+					<documentation>
+						Indicates a Windows RC STATE3 control.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="statusbar">
+				<annotation>
+					<documentation>
+						Indicates a window for providing feedback to the users, like 'read-only', etc.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="string">
+				<annotation>
+					<documentation>
+						Indicates a string, for example an entry in a STRINGTABLE resource in Windows.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="tabcontrol">
+				<annotation>
+					<documentation>
+						Indicates a layers of controls with a tab to select layers.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="table">
+				<annotation>
+					<documentation>
+						Indicates a display and edits regular two-dimensional tables of cells.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="textbox">
+				<annotation>
+					<documentation>
+						Indicates a XUL textbox element.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="togglebutton">
+				<annotation>
+					<documentation>
+						Indicates a UI button that can be toggled to on or off state.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="toolbar">
+				<annotation>
+					<documentation>
+						Indicates an array of controls, usually buttons.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="tooltip">
+				<annotation>
+					<documentation>
+						Indicates a pop up tool tip text.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="trackbar">
+				<annotation>
+					<documentation>
+						Indicates a bar with a pointer indicating a position within a certain range.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="tree">
+				<annotation>
+					<documentation>
+						Indicates a control that displays a set of hierarchical data.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="uri">
+				<annotation>
+					<documentation>
+						Indicates a URI (URN or URL).
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="userbutton">
+				<annotation>
+					<documentation>
+						Indicates a Windows RC USERBUTTON control.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="usercontrol">
+				<annotation>
+					<documentation>
+						Indicates a user-defined control like CONTROL control in Windows.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="var">
+				<annotation>
+					<documentation>
+						Indicates the text of a variable.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="versioninfo">
+				<annotation>
+					<documentation>
+						Indicates version information about a resource like VERSIONINFO in Windows.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="vscrollbar">
+				<annotation>
+					<documentation>
+						Indicates a vertical scrollbar.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="window">
+				<annotation>
+					<documentation>
+						Indicates a graphical window.
+					</documentation>
+				</annotation>
+			</enumeration>
+		</restriction>
+	</simpleType>
+	<simpleType name="size-unitValueList">
+		<annotation>
+			<documentation>
+				Values for the attribute 'size-unit'.
+			</documentation>
+		</annotation>
+		<restriction base="xsd:NMTOKEN">
+			<enumeration value="byte">
+				<annotation>
+					<documentation>
+						Indicates a size in 8-bit bytes.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="char">
+				<annotation>
+					<documentation>
+						Indicates a size in Unicode characters.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="col">
+				<annotation>
+					<documentation>
+						Indicates a size in columns. Used for HTML text area.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="cm">
+				<annotation>
+					<documentation>
+						Indicates a size in centimeters.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="dlgunit">
+				<annotation>
+					<documentation>
+						Indicates a size in dialog units, as defined in Windows resources.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="em">
+				<annotation>
+					<documentation>
+						Indicates a size in 'font-size' units (as defined in CSS).
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="ex">
+				<annotation>
+					<documentation>
+						Indicates a size in 'x-height' units (as defined in CSS).
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="glyph">
+				<annotation>
+					<documentation>
+						Indicates a size in glyphs. A glyph is considered to be one or more combined Unicode characters that represent a single displayable text character. Sometimes referred to as a 'grapheme cluster'
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="in">
+				<annotation>
+					<documentation>
+						Indicates a size in inches.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="mm">
+				<annotation>
+					<documentation>
+						Indicates a size in millimeters.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="percent">
+				<annotation>
+					<documentation>
+						Indicates a size in percentage.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="pixel">
+				<annotation>
+					<documentation>
+						Indicates a size in pixels.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="point">
+				<annotation>
+					<documentation>
+						Indicates a size in point.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="row">
+				<annotation>
+					<documentation>
+						Indicates a size in rows. Used for HTML text area.
+					</documentation>
+				</annotation>
+			</enumeration>
+		</restriction>
+	</simpleType>
+	<simpleType name="stateValueList">
+		<annotation>
+			<documentation>
+				Values for the attribute 'state'.
+			</documentation>
+		</annotation>
+		<restriction base="xsd:NMTOKEN">
+			<enumeration value="final">
+				<annotation>
+					<documentation>
+						Indicates the terminating state.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="needs-adaptation">
+				<annotation>
+					<documentation>
+						Indicates only non-textual information needs adaptation.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="needs-l10n">
+				<annotation>
+					<documentation>
+						Indicates both text and non-textual information needs adaptation.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="needs-review-adaptation">
+				<annotation>
+					<documentation>
+						Indicates only non-textual information needs review.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="needs-review-l10n">
+				<annotation>
+					<documentation>
+						Indicates both text and non-textual information needs review.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="needs-review-translation">
+				<annotation>
+					<documentation>
+						Indicates that only the text of the item needs to be reviewed.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="needs-translation">
+				<annotation>
+					<documentation>
+						Indicates that the item needs to be translated.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="new">
+				<annotation>
+					<documentation>
+						Indicates that the item is new. For example, translation units that were not in a previous version of the document.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="signed-off">
+				<annotation>
+					<documentation>
+						Indicates that changes are reviewed and approved.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="translated">
+				<annotation>
+					<documentation>
+						Indicates that the item has been translated.
+					</documentation>
+				</annotation>
+			</enumeration>
+		</restriction>
+	</simpleType>
+	<simpleType name="state-qualifierValueList">
+		<annotation>
+			<documentation>
+				Values for the attribute 'state-qualifier'.
+			</documentation>
+		</annotation>
+		<restriction base="xsd:NMTOKEN">
+			<enumeration value="exact-match">
+				<annotation>
+					<documentation>
+						Indicates an exact match. An exact match occurs when a source text of a segment is exactly the same as the source text of a segment that was translated previously.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="fuzzy-match">
+				<annotation>
+					<documentation>
+						Indicates a fuzzy match. A fuzzy match occurs when a source text of a segment is very similar to the source text of a segment that was translated previously (e.g. when the difference is casing, a few changed words, white-space discripancy, etc.).
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="id-match">
+				<annotation>
+					<documentation>
+						Indicates a match based on matching IDs (in addition to matching text).
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="leveraged-glossary">
+				<annotation>
+					<documentation>
+						Indicates a translation derived from a glossary.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="leveraged-inherited">
+				<annotation>
+					<documentation>
+						Indicates a translation derived from existing translation.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="leveraged-mt">
+				<annotation>
+					<documentation>
+						Indicates a translation derived from machine translation.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="leveraged-repository">
+				<annotation>
+					<documentation>
+						Indicates a translation derived from a translation repository.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="leveraged-tm">
+				<annotation>
+					<documentation>
+						Indicates a translation derived from a translation memory.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="mt-suggestion">
+				<annotation>
+					<documentation>
+						Indicates the translation is suggested by machine translation.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="rejected-grammar">
+				<annotation>
+					<documentation>
+						Indicates that the item has been rejected because of incorrect grammar.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="rejected-inaccurate">
+				<annotation>
+					<documentation>
+						Indicates that the item has been rejected because it is incorrect.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="rejected-length">
+				<annotation>
+					<documentation>
+						Indicates that the item has been rejected because it is too long or too short.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="rejected-spelling">
+				<annotation>
+					<documentation>
+						Indicates that the item has been rejected because of incorrect spelling.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="tm-suggestion">
+				<annotation>
+					<documentation>
+						Indicates the translation is suggested by translation memory.
+					</documentation>
+				</annotation>
+			</enumeration>
+		</restriction>
+	</simpleType>
+	<simpleType name="unitValueList">
+		<annotation>
+			<documentation>
+				Values for the attribute 'unit'.
+			</documentation>
+		</annotation>
+		<restriction base="xsd:NMTOKEN">
+			<enumeration value="word">
+				<annotation>
+					<documentation>
+						Refers to words.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="page">
+				<annotation>
+					<documentation>
+						Refers to pages.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="trans-unit">
+				<annotation>
+					<documentation>
+						Refers to &lt;trans-unit&gt; elements.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="bin-unit">
+				<annotation>
+					<documentation>
+						Refers to &lt;bin-unit&gt; elements.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="glyph">
+				<annotation>
+					<documentation>
+						Refers to glyphs.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="item">
+				<annotation>
+					<documentation>
+						Refers to &lt;trans-unit&gt; and/or &lt;bin-unit&gt; elements.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="instance">
+				<annotation>
+					<documentation>
+						Refers to the occurrences of instances defined by the count-type value.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="character">
+				<annotation>
+					<documentation>
+						Refers to characters.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="line">
+				<annotation>
+					<documentation>
+						Refers to lines.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="sentence">
+				<annotation>
+					<documentation>
+						Refers to sentences.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="paragraph">
+				<annotation>
+					<documentation>
+						Refers to paragraphs.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="segment">
+				<annotation>
+					<documentation>
+						Refers to segments.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="placeable">
+				<annotation>
+					<documentation>
+						Refers to placeables (inline elements).
+					</documentation>
+				</annotation>
+			</enumeration>
+		</restriction>
+	</simpleType>
+	<simpleType name="priorityValueList">
+		<annotation>
+			<documentation>
+				Values for the attribute 'priority'.
+			</documentation>
+		</annotation>
+		<restriction base="xsd:positiveInteger">
+			<enumeration value="1">
+				<annotation>
+					<documentation>
+						Highest priority.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="2">
+				<annotation>
+					<documentation>
+						High priority.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="3">
+				<annotation>
+					<documentation>
+						High priority, but not as important as 2.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="4">
+				<annotation>
+					<documentation>
+						High priority, but not as important as 3.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="5">
+				<annotation>
+					<documentation>
+						Medium priority, but more important than 6.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="6">
+				<annotation>
+					<documentation>
+						Medium priority, but less important than 5.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="7">
+				<annotation>
+					<documentation>
+						Low priority, but more important than 8.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="8">
+				<annotation>
+					<documentation>
+						Low priority, but more important than 9.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="9">
+				<annotation>
+					<documentation>
+						Low priority.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="10">
+				<annotation>
+					<documentation>
+						Lowest priority.
+					</documentation>
+				</annotation>
+			</enumeration>
+		</restriction>
+	</simpleType>
+	<simpleType name="reformatValueYesNo">
+		<restriction base="xsd:string">
+			<enumeration value="yes">
+				<annotation>
+					<documentation>
+						This value indicates that all properties can be reformatted. This value must be used alone.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="no">
+				<annotation>
+					<documentation>
+						This value indicates that no properties should be reformatted. This value must be used alone.
+					</documentation>
+				</annotation>
+			</enumeration>
+		</restriction>
+	</simpleType>
+	<simpleType name="reformatValueList">
+		<list>
+			<simpleType>
+				<union memberTypes="xlf:XTend">
+					<simpleType>
+						<restriction base="xsd:string">
+							<enumeration value="coord">
+								<annotation>
+									<documentation>
+										This value indicates that all information in the coord attribute can be modified.
+									</documentation>
+								</annotation>
+							</enumeration>
+							<enumeration value="coord-x">
+								<annotation>
+									<documentation>
+										This value indicates that the x information in the coord attribute can be modified.
+									</documentation>
+								</annotation>
+							</enumeration>
+							<enumeration value="coord-y">
+								<annotation>
+									<documentation>
+										This value indicates that the y information in the coord attribute can be modified.
+									</documentation>
+								</annotation>
+							</enumeration>
+							<enumeration value="coord-cx">
+								<annotation>
+									<documentation>
+										This value indicates that the cx information in the coord attribute can be modified.
+									</documentation>
+								</annotation>
+							</enumeration>
+							<enumeration value="coord-cy">
+								<annotation>
+									<documentation>
+										This value indicates that the cy information in the coord attribute can be modified.
+									</documentation>
+								</annotation>
+							</enumeration>
+							<enumeration value="font">
+								<annotation>
+									<documentation>
+										This value indicates that all the information in the font attribute can be modified.
+									</documentation>
+								</annotation>
+							</enumeration>
+							<enumeration value="font-name">
+								<annotation>
+									<documentation>
+										This value indicates that the name information in the font attribute can be modified.
+									</documentation>
+								</annotation>
+							</enumeration>
+							<enumeration value="font-size">
+								<annotation>
+									<documentation>
+										This value indicates that the size information in the font attribute can be modified.
+									</documentation>
+								</annotation>
+							</enumeration>
+							<enumeration value="font-weight">
+								<annotation>
+									<documentation>
+										This value indicates that the weight information in the font attribute can be modified.
+									</documentation>
+								</annotation>
+							</enumeration>
+							<enumeration value="css-style">
+								<annotation>
+									<documentation>
+										This value indicates that the information in the css-style attribute can be modified.
+									</documentation>
+								</annotation>
+							</enumeration>
+							<enumeration value="style">
+								<annotation>
+									<documentation>
+										This value indicates that the information in the style attribute can be modified.
+									</documentation>
+								</annotation>
+							</enumeration>
+							<enumeration value="ex-style">
+								<annotation>
+									<documentation>
+										This value indicates that the information in the exstyle attribute can be modified.
+									</documentation>
+								</annotation>
+							</enumeration>
+						</restriction>
+					</simpleType>
+				</union>
+			</simpleType>
+		</list>
+	</simpleType>
+	<simpleType name="purposeValueList">
+		<restriction base="xsd:string">
+			<enumeration value="information">
+				<annotation>
+					<documentation>
+						Indicates that the context is informational in nature, specifying for example, how a term should be translated. Thus, should be displayed to anyone editing the XLIFF document.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="location">
+				<annotation>
+					<documentation>
+						Indicates that the context-group is used to specify where the term was found in the translatable source. Thus, it is not displayed.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="match">
+				<annotation>
+					<documentation>
+						Indicates that the context information should be used during translation memory lookups. Thus, it is not displayed.
+					</documentation>
+				</annotation>
+			</enumeration>
+		</restriction>
+	</simpleType>
+	<simpleType name="alttranstypeValueList">
+		<restriction base="xsd:string">
+			<enumeration value="proposal">
+				<annotation>
+					<documentation>
+						Represents a translation proposal from a translation memory or other resource.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="previous-version">
+				<annotation>
+					<documentation>
+						Represents a previous version of the target element.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="rejected">
+				<annotation>
+					<documentation>
+						Represents a rejected version of the target element.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="reference">
+				<annotation>
+					<documentation>
+						Represents a translation to be used for reference purposes only, for example from a related product or a different language.
+					</documentation>
+				</annotation>
+			</enumeration>
+			<enumeration value="accepted">
+				<annotation>
+					<documentation>
+						Represents a proposed translation that was used for the translation of the trans-unit, possibly modified.
+					</documentation>
+				</annotation>
+			</enumeration>
+		</restriction>
+	</simpleType>
+	<!-- Other Types -->
+	<complexType name="ElemType_ExternalReference">
+		<choice>
+			<element ref="xlf:internal-file" />
+			<element ref="xlf:external-file" />
+		</choice>
+	</complexType>
+	<simpleType name="AttrType_purpose">
+		<list>
+			<simpleType>
+				<union memberTypes="xlf:purposeValueList xlf:XTend" />
+			</simpleType>
+		</list>
+	</simpleType>
+	<simpleType name="AttrType_datatype">
+		<union memberTypes="xlf:datatypeValueList xlf:XTend" />
+	</simpleType>
+	<simpleType name="AttrType_restype">
+		<union memberTypes="xlf:restypeValueList xlf:XTend" />
+	</simpleType>
+	<simpleType name="AttrType_alttranstype">
+		<union memberTypes="xlf:alttranstypeValueList xlf:XTend" />
+	</simpleType>
+	<simpleType name="AttrType_context-type">
+		<union memberTypes="xlf:context-typeValueList xlf:XTend" />
+	</simpleType>
+	<simpleType name="AttrType_state">
+		<union memberTypes="xlf:stateValueList xlf:XTend" />
+	</simpleType>
+	<simpleType name="AttrType_state-qualifier">
+		<union memberTypes="xlf:state-qualifierValueList xlf:XTend" />
+	</simpleType>
+	<simpleType name="AttrType_count-type">
+		<union memberTypes="xlf:restypeValueList xlf:count-typeValueList xlf:datatypeValueList xlf:stateValueList xlf:state-qualifierValueList xlf:XTend" />
+	</simpleType>
+	<simpleType name="AttrType_InlineDelimiters">
+		<union memberTypes="xlf:InlineDelimitersValueList xlf:XTend" />
+	</simpleType>
+	<simpleType name="AttrType_InlinePlaceholders">
+		<union memberTypes="xlf:InlinePlaceholdersValueList xlf:XTend" />
+	</simpleType>
+	<simpleType name="AttrType_size-unit">
+		<union memberTypes="xlf:size-unitValueList xlf:XTend" />
+	</simpleType>
+	<simpleType name="AttrType_mtype">
+		<union memberTypes="xlf:mtypeValueList xlf:XTend" />
+	</simpleType>
+	<simpleType name="AttrType_unit">
+		<union memberTypes="xlf:unitValueList xlf:XTend" />
+	</simpleType>
+	<simpleType name="AttrType_priority">
+		<union memberTypes="xlf:priorityValueList" />
+	</simpleType>
+	<simpleType name="AttrType_reformat">
+		<union memberTypes="xlf:reformatValueYesNo xlf:reformatValueList" />
+	</simpleType>
+	<simpleType name="AttrType_YesNo">
+		<restriction base="xsd:NMTOKEN">
+			<enumeration value="yes" />
+			<enumeration value="no" />
+		</restriction>
+	</simpleType>
+	<simpleType name="AttrType_Position">
+		<restriction base="xsd:NMTOKEN">
+			<enumeration value="open" />
+			<enumeration value="close" />
+		</restriction>
+	</simpleType>
+	<simpleType name="AttrType_assoc">
+		<restriction base="xsd:NMTOKEN">
+			<enumeration value="preceding" />
+			<enumeration value="following" />
+			<enumeration value="both" />
+		</restriction>
+	</simpleType>
+	<simpleType name="AttrType_annotates">
+		<restriction base="xsd:NMTOKEN">
+			<enumeration value="source" />
+			<enumeration value="target" />
+			<enumeration value="general" />
+		</restriction>
+	</simpleType>
+	<simpleType name="AttrType_Coordinates">
+		<annotation>
+			<documentation>
+				Values for the attribute 'coord'.
+			</documentation>
+		</annotation>
+		<restriction base="xsd:string">
+			<pattern value="(-?\d+|#);(-?\d+|#);(-?\d+|#);(-?\d+|#)" />
+		</restriction>
+	</simpleType>
+	<simpleType name="AttrType_Version">
+		<annotation>
+			<documentation>
+				Version values: 1.0 and 1.1 are allowed for backward compatibility.
+			</documentation>
+		</annotation>
+		<restriction base="xsd:string">
+			<enumeration value="1.2" />
+			<enumeration value="1.1" />
+			<enumeration value="1.0" />
+		</restriction>
+	</simpleType>
+	<!-- Groups -->
+	<group name="ElemGroup_TextContent">
+		<choice>
+			<element ref="xlf:g" />
+			<element ref="xlf:bpt" />
+			<element ref="xlf:ept" />
+			<element ref="xlf:ph" />
+			<element ref="xlf:it" />
+			<element ref="xlf:mrk" />
+			<element ref="xlf:x" />
+			<element ref="xlf:bx" />
+			<element ref="xlf:ex" />
+		</choice>
+	</group>
+	<attributeGroup name="AttrGroup_TextContent">
+		<attribute name="id" type="xsd:string" use="required" />
+		<attribute name="xid" type="xsd:string" use="optional" />
+		<attribute name="equiv-text" type="xsd:string" use="optional" />
+		<anyAttribute namespace="##other" processContents="strict" />
+	</attributeGroup>
+	<!-- XLIFF Structure -->
+	<element name="xliff">
+		<complexType>
+			<sequence maxOccurs="unbounded">
+				<any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="strict" />
+				<element ref="xlf:file" />
+			</sequence>
+			<attribute name="version" type="xlf:AttrType_Version" use="required" />
+			<attribute ref="xml:lang" use="optional" />
+			<anyAttribute namespace="##other" processContents="strict" />
+		</complexType>
+	</element>
+	<element name="file">
+		<complexType>
+			<sequence>
+				<element minOccurs="0" ref="xlf:header" />
+				<element ref="xlf:body" />
+			</sequence>
+			<attribute name="original" type="xsd:string" use="required" />
+			<attribute name="source-language" type="xsd:language" use="required" />
+			<attribute name="datatype" type="xlf:AttrType_datatype" use="required" />
+			<attribute name="tool-id" type="xsd:string" use="optional" />
+			<attribute name="date" type="xsd:dateTime" use="optional" />
+			<attribute ref="xml:space" use="optional" />
+			<attribute name="category" type="xsd:string" use="optional" />
+			<attribute name="target-language" type="xsd:language" use="optional" />
+			<attribute name="product-name" type="xsd:string" use="optional" />
+			<attribute name="product-version" type="xsd:string" use="optional" />
+			<attribute name="build-num" type="xsd:string" use="optional" />
+			<anyAttribute namespace="##other" processContents="strict" />
+		</complexType>
+		<unique name="U_group_id">
+			<selector xpath=".//xlf:group" />
+			<field xpath="@id" />
+		</unique>
+		<key name="K_unit_id">
+			<selector xpath=".//xlf:trans-unit|.//xlf:bin-unit" />
+			<field xpath="@id" />
+		</key>
+		<keyref name="KR_unit_id" refer="xlf:K_unit_id">
+			<selector xpath=".//bpt|.//ept|.//it|.//ph|.//g|.//x|.//bx|.//ex|.//sub" />
+			<field xpath="@xid" />
+		</keyref>
+		<key name="K_tool-id">
+			<selector xpath="xlf:header/xlf:tool" />
+			<field xpath="@tool-id" />
+		</key>
+		<keyref name="KR_file_tool-id" refer="xlf:K_tool-id">
+			<selector xpath="." />
+			<field xpath="@tool-id" />
+		</keyref>
+		<keyref name="KR_phase_tool-id" refer="xlf:K_tool-id">
+			<selector xpath="xlf:header/xlf:phase-group/xlf:phase" />
+			<field xpath="@tool-id" />
+		</keyref>
+		<keyref name="KR_alt-trans_tool-id" refer="xlf:K_tool-id">
+			<selector xpath=".//xlf:trans-unit/xlf:alt-trans" />
+			<field xpath="@tool-id" />
+		</keyref>
+		<key name="K_count-group_name">
+			<selector xpath=".//xlf:count-group" />
+			<field xpath="@name" />
+		</key>
+		<unique name="U_context-group_name">
+			<selector xpath=".//xlf:context-group" />
+			<field xpath="@name" />
+		</unique>
+		<key name="K_phase-name">
+			<selector xpath="xlf:header/xlf:phase-group/xlf:phase" />
+			<field xpath="@phase-name" />
+		</key>
+		<keyref name="KR_phase-name" refer="xlf:K_phase-name">
+			<selector xpath=".//xlf:count|.//xlf:trans-unit|.//xlf:target|.//bin-unit|.//bin-target" />
+			<field xpath="@phase-name" />
+		</keyref>
+		<unique name="U_uid">
+			<selector xpath=".//xlf:external-file" />
+			<field xpath="@uid" />
+		</unique>
+	</element>
+	<element name="header">
+		<complexType>
+			<sequence>
+				<element minOccurs="0" name="skl" type="xlf:ElemType_ExternalReference" />
+				<element minOccurs="0" ref="xlf:phase-group" />
+				<choice maxOccurs="unbounded" minOccurs="0">
+					<element name="glossary" type="xlf:ElemType_ExternalReference" />
+					<element name="reference" type="xlf:ElemType_ExternalReference" />
+					<element ref="xlf:count-group" />
+					<element ref="xlf:note" />
+					<element ref="xlf:tool" />
+				</choice>
+				<any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="strict" />
+			</sequence>
+		</complexType>
+	</element>
+	<element name="internal-file">
+		<complexType>
+			<simpleContent>
+				<extension base="xsd:string">
+					<attribute name="form" type="xsd:string" />
+					<attribute name="crc" type="xsd:NMTOKEN" />
+				</extension>
+			</simpleContent>
+		</complexType>
+	</element>
+	<element name="external-file">
+		<complexType>
+			<attribute name="href" type="xsd:string" use="required" />
+			<attribute name="crc" type="xsd:NMTOKEN" />
+			<attribute name="uid" type="xsd:NMTOKEN" />
+		</complexType>
+	</element>
+	<element name="note">
+		<complexType>
+			<simpleContent>
+				<extension base="xsd:string">
+					<attribute ref="xml:lang" use="optional" />
+					<attribute default="1" name="priority" type="xlf:AttrType_priority" use="optional" />
+					<attribute name="from" type="xsd:string" use="optional" />
+					<attribute default="general" name="annotates" type="xlf:AttrType_annotates" use="optional" />
+				</extension>
+			</simpleContent>
+		</complexType>
+	</element>
+	<element name="phase-group">
+		<complexType>
+			<sequence maxOccurs="unbounded">
+				<element ref="xlf:phase" />
+			</sequence>
+		</complexType>
+	</element>
+	<element name="phase">
+		<complexType>
+			<sequence maxOccurs="unbounded" minOccurs="0">
+				<element ref="xlf:note" />
+			</sequence>
+			<attribute name="phase-name" type="xsd:string" use="required" />
+			<attribute name="process-name" type="xsd:string" use="required" />
+			<attribute name="company-name" type="xsd:string" use="optional" />
+			<attribute name="tool-id" type="xsd:string" use="optional" />
+			<attribute name="date" type="xsd:dateTime" use="optional" />
+			<attribute name="job-id" type="xsd:string" use="optional" />
+			<attribute name="contact-name" type="xsd:string" use="optional" />
+			<attribute name="contact-email" type="xsd:string" use="optional" />
+			<attribute name="contact-phone" type="xsd:string" use="optional" />
+		</complexType>
+	</element>
+	<element name="count-group">
+		<complexType>
+			<sequence maxOccurs="unbounded" minOccurs="0">
+				<element ref="xlf:count" />
+			</sequence>
+			<attribute name="name" type="xsd:string" use="required" />
+		</complexType>
+	</element>
+	<element name="count">
+		<complexType>
+			<simpleContent>
+				<extension base="xsd:string">
+					<attribute name="count-type" type="xlf:AttrType_count-type" use="optional" />
+					<attribute name="phase-name" type="xsd:string" use="optional" />
+					<attribute default="word" name="unit" type="xlf:AttrType_unit" use="optional" />
+				</extension>
+			</simpleContent>
+		</complexType>
+	</element>
+	<element name="context-group">
+		<complexType>
+			<sequence maxOccurs="unbounded">
+				<element ref="xlf:context" />
+			</sequence>
+			<attribute name="name" type="xsd:string" use="optional" />
+			<attribute name="crc" type="xsd:NMTOKEN" use="optional" />
+			<attribute name="purpose" type="xlf:AttrType_purpose" use="optional" />
+		</complexType>
+	</element>
+	<element name="context">
+		<complexType>
+			<simpleContent>
+				<extension base="xsd:string">
+					<attribute name="context-type" type="xlf:AttrType_context-type" use="required" />
+					<attribute default="no" name="match-mandatory" type="xlf:AttrType_YesNo" use="optional" />
+					<attribute name="crc" type="xsd:NMTOKEN" use="optional" />
+				</extension>
+			</simpleContent>
+		</complexType>
+	</element>
+	<element name="tool">
+		<complexType mixed="true">
+			<sequence>
+				<any namespace="##any" processContents="strict" minOccurs="0" maxOccurs="unbounded" />
+			</sequence>
+			<attribute name="tool-id" type="xsd:string" use="required" />
+			<attribute name="tool-name" type="xsd:string" use="required" />
+			<attribute name="tool-version" type="xsd:string" use="optional" />
+			<attribute name="tool-company" type="xsd:string" use="optional" />
+			<anyAttribute namespace="##other" processContents="strict" />
+		</complexType>
+	</element>
+	<element name="body">
+		<complexType>
+			<choice maxOccurs="unbounded" minOccurs="0">
+				<element maxOccurs="unbounded" minOccurs="0" ref="xlf:group" />
+				<element maxOccurs="unbounded" minOccurs="0" ref="xlf:trans-unit" />
+				<element maxOccurs="unbounded" minOccurs="0" ref="xlf:bin-unit" />
+			</choice>
+		</complexType>
+	</element>
+	<element name="group">
+		<complexType>
+			<sequence>
+				<sequence>
+					<element maxOccurs="unbounded" minOccurs="0" ref="xlf:context-group" />
+					<element maxOccurs="unbounded" minOccurs="0" ref="xlf:count-group" />
+					<element maxOccurs="unbounded" minOccurs="0" ref="xlf:note" />
+					<any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="strict" />
+				</sequence>
+				<choice maxOccurs="unbounded">
+					<element maxOccurs="unbounded" minOccurs="0" ref="xlf:group" />
+					<element maxOccurs="unbounded" minOccurs="0" ref="xlf:trans-unit" />
+					<element maxOccurs="unbounded" minOccurs="0" ref="xlf:bin-unit" />
+				</choice>
+			</sequence>
+			<attribute name="id" type="xsd:string" use="optional" />
+			<attribute name="datatype" type="xlf:AttrType_datatype" use="optional" />
+			<attribute default="default" ref="xml:space" use="optional" />
+			<attribute name="restype" type="xlf:AttrType_restype" use="optional" />
+			<attribute name="resname" type="xsd:string" use="optional" />
+			<attribute name="extradata" type="xsd:string" use="optional" />
+			<attribute name="extype" type="xsd:string" use="optional" />
+			<attribute name="help-id" type="xsd:NMTOKEN" use="optional" />
+			<attribute name="menu" type="xsd:string" use="optional" />
+			<attribute name="menu-option" type="xsd:string" use="optional" />
+			<attribute name="menu-name" type="xsd:string" use="optional" />
+			<attribute name="coord" type="xlf:AttrType_Coordinates" use="optional" />
+			<attribute name="font" type="xsd:string" use="optional" />
+			<attribute name="css-style" type="xsd:string" use="optional" />
+			<attribute name="style" type="xsd:NMTOKEN" use="optional" />
+			<attribute name="exstyle" type="xsd:NMTOKEN" use="optional" />
+			<attribute default="yes" name="translate" type="xlf:AttrType_YesNo" use="optional" />
+			<attribute default="yes" name="reformat" type="xlf:AttrType_reformat" use="optional" />
+			<attribute default="pixel" name="size-unit" type="xlf:AttrType_size-unit" use="optional" />
+			<attribute name="maxwidth" type="xsd:NMTOKEN" use="optional" />
+			<attribute name="minwidth" type="xsd:NMTOKEN" use="optional" />
+			<attribute name="maxheight" type="xsd:NMTOKEN" use="optional" />
+			<attribute name="minheight" type="xsd:NMTOKEN" use="optional" />
+			<attribute name="maxbytes" type="xsd:NMTOKEN" use="optional" />
+			<attribute name="minbytes" type="xsd:NMTOKEN" use="optional" />
+			<attribute name="charclass" type="xsd:string" use="optional" />
+			<attribute default="no" name="merged-trans" type="xlf:AttrType_YesNo" use="optional" />
+			<anyAttribute namespace="##other" processContents="strict" />
+		</complexType>
+	</element>
+	<element name="trans-unit">
+		<complexType>
+			<sequence>
+				<element ref="xlf:source" />
+				<element minOccurs="0" ref="xlf:seg-source" />
+				<element minOccurs="0" ref="xlf:target" />
+				<choice maxOccurs="unbounded" minOccurs="0">
+					<element ref="xlf:context-group" />
+					<element ref="xlf:count-group" />
+					<element ref="xlf:note" />
+					<element ref="xlf:alt-trans" />
+				</choice>
+				<any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="strict" />
+			</sequence>
+			<attribute name="id" type="xsd:string" use="required" />
+			<attribute name="approved" type="xlf:AttrType_YesNo" use="optional" />
+			<attribute default="yes" name="translate" type="xlf:AttrType_YesNo" use="optional" />
+			<attribute default="yes" name="reformat" type="xlf:AttrType_reformat" use="optional" />
+			<attribute default="default" ref="xml:space" use="optional" />
+			<attribute name="datatype" type="xlf:AttrType_datatype" use="optional" />
+			<attribute name="phase-name" type="xsd:string" use="optional" />
+			<attribute name="restype" type="xlf:AttrType_restype" use="optional" />
+			<attribute name="resname" type="xsd:string" use="optional" />
+			<attribute name="extradata" type="xsd:string" use="optional" />
+			<attribute name="extype" type="xsd:string" use="optional" />
+			<attribute name="help-id" type="xsd:NMTOKEN" use="optional" />
+			<attribute name="menu" type="xsd:string" use="optional" />
+			<attribute name="menu-option" type="xsd:string" use="optional" />
+			<attribute name="menu-name" type="xsd:string" use="optional" />
+			<attribute name="coord" type="xlf:AttrType_Coordinates" use="optional" />
+			<attribute name="font" type="xsd:string" use="optional" />
+			<attribute name="css-style" type="xsd:string" use="optional" />
+			<attribute name="style" type="xsd:NMTOKEN" use="optional" />
+			<attribute name="exstyle" type="xsd:NMTOKEN" use="optional" />
+			<attribute default="pixel" name="size-unit" type="xlf:AttrType_size-unit" use="optional" />
+			<attribute name="maxwidth" type="xsd:NMTOKEN" use="optional" />
+			<attribute name="minwidth" type="xsd:NMTOKEN" use="optional" />
+			<attribute name="maxheight" type="xsd:NMTOKEN" use="optional" />
+			<attribute name="minheight" type="xsd:NMTOKEN" use="optional" />
+			<attribute name="maxbytes" type="xsd:NMTOKEN" use="optional" />
+			<attribute name="minbytes" type="xsd:NMTOKEN" use="optional" />
+			<attribute name="charclass" type="xsd:string" use="optional" />
+			<attribute default="yes" name="merged-trans" type="xlf:AttrType_YesNo" use="optional" />
+			<anyAttribute namespace="##other" processContents="strict" />
+		</complexType>
+		<unique name="U_tu_segsrc_mid">
+			<selector xpath="./xlf:seg-source/xlf:mrk" />
+			<field xpath="@mid" />
+		</unique>
+		<keyref name="KR_tu_segsrc_mid" refer="xlf:U_tu_segsrc_mid">
+			<selector xpath="./xlf:target/xlf:mrk|./xlf:alt-trans" />
+			<field xpath="@mid" />
+		</keyref>
+	</element>
+	<element name="source">
+		<complexType mixed="true">
+			<group maxOccurs="unbounded" minOccurs="0" ref="xlf:ElemGroup_TextContent" />
+			<attribute ref="xml:lang" use="optional" />
+			<anyAttribute namespace="##other" processContents="strict" />
+		</complexType>
+		<unique name="U_source_bpt_rid">
+			<selector xpath=".//xlf:bpt" />
+			<field xpath="@rid" />
+		</unique>
+		<keyref name="KR_source_ept_rid" refer="xlf:U_source_bpt_rid">
+			<selector xpath=".//xlf:ept" />
+			<field xpath="@rid" />
+		</keyref>
+		<unique name="U_source_bx_rid">
+			<selector xpath=".//xlf:bx" />
+			<field xpath="@rid" />
+		</unique>
+		<keyref name="KR_source_ex_rid" refer="xlf:U_source_bx_rid">
+			<selector xpath=".//xlf:ex" />
+			<field xpath="@rid" />
+		</keyref>
+	</element>
+	<element name="seg-source">
+		<complexType mixed="true">
+			<group maxOccurs="unbounded" minOccurs="0" ref="xlf:ElemGroup_TextContent" />
+			<attribute ref="xml:lang" use="optional" />
+			<anyAttribute namespace="##other" processContents="strict" />
+		</complexType>
+		<unique name="U_segsrc_bpt_rid">
+			<selector xpath=".//xlf:bpt" />
+			<field xpath="@rid" />
+		</unique>
+		<keyref name="KR_segsrc_ept_rid" refer="xlf:U_segsrc_bpt_rid">
+			<selector xpath=".//xlf:ept" />
+			<field xpath="@rid" />
+		</keyref>
+		<unique name="U_segsrc_bx_rid">
+			<selector xpath=".//xlf:bx" />
+			<field xpath="@rid" />
+		</unique>
+		<keyref name="KR_segsrc_ex_rid" refer="xlf:U_segsrc_bx_rid">
+			<selector xpath=".//xlf:ex" />
+			<field xpath="@rid" />
+		</keyref>
+	</element>
+	<element name="target">
+		<complexType mixed="true">
+			<group maxOccurs="unbounded" minOccurs="0" ref="xlf:ElemGroup_TextContent" />
+			<attribute name="state" type="xlf:AttrType_state" use="optional" />
+			<attribute name="state-qualifier" type="xlf:AttrType_state-qualifier" use="optional" />
+			<attribute name="phase-name" type="xsd:NMTOKEN" use="optional" />
+			<attribute ref="xml:lang" use="optional" />
+			<attribute name="resname" type="xsd:string" use="optional" />
+			<attribute name="coord" type="xlf:AttrType_Coordinates" use="optional" />
+			<attribute name="font" type="xsd:string" use="optional" />
+			<attribute name="css-style" type="xsd:string" use="optional" />
+			<attribute name="style" type="xsd:NMTOKEN" use="optional" />
+			<attribute name="exstyle" type="xsd:NMTOKEN" use="optional" />
+			<attribute default="yes" name="equiv-trans" type="xlf:AttrType_YesNo" use="optional" />
+			<anyAttribute namespace="##other" processContents="strict" />
+		</complexType>
+		<unique name="U_target_bpt_rid">
+			<selector xpath=".//xlf:bpt" />
+			<field xpath="@rid" />
+		</unique>
+		<keyref name="KR_target_ept_rid" refer="xlf:U_target_bpt_rid">
+			<selector xpath=".//xlf:ept" />
+			<field xpath="@rid" />
+		</keyref>
+		<unique name="U_target_bx_rid">
+			<selector xpath=".//xlf:bx" />
+			<field xpath="@rid" />
+		</unique>
+		<keyref name="KR_target_ex_rid" refer="xlf:U_target_bx_rid">
+			<selector xpath=".//xlf:ex" />
+			<field xpath="@rid" />
+		</keyref>
+	</element>
+	<element name="alt-trans">
+		<complexType>
+			<sequence>
+				<element minOccurs="0" ref="xlf:source" />
+				<element minOccurs="0" ref="xlf:seg-source" />
+				<element maxOccurs="1" ref="xlf:target" />
+				<element maxOccurs="unbounded" minOccurs="0" ref="xlf:context-group" />
+				<element maxOccurs="unbounded" minOccurs="0" ref="xlf:note" />
+				<any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="strict" />
+			</sequence>
+			<attribute name="match-quality" type="xsd:string" use="optional" />
+			<attribute name="tool-id" type="xsd:string" use="optional" />
+			<attribute name="crc" type="xsd:NMTOKEN" use="optional" />
+			<attribute ref="xml:lang" use="optional" />
+			<attribute name="origin" type="xsd:string" use="optional" />
+			<attribute name="datatype" type="xlf:AttrType_datatype" use="optional" />
+			<attribute default="default" ref="xml:space" use="optional" />
+			<attribute name="restype" type="xlf:AttrType_restype" use="optional" />
+			<attribute name="resname" type="xsd:string" use="optional" />
+			<attribute name="extradata" type="xsd:string" use="optional" />
+			<attribute name="extype" type="xsd:string" use="optional" />
+			<attribute name="help-id" type="xsd:NMTOKEN" use="optional" />
+			<attribute name="menu" type="xsd:string" use="optional" />
+			<attribute name="menu-option" type="xsd:string" use="optional" />
+			<attribute name="menu-name" type="xsd:string" use="optional" />
+			<attribute name="mid" type="xsd:NMTOKEN" use="optional" />
+			<attribute name="coord" type="xlf:AttrType_Coordinates" use="optional" />
+			<attribute name="font" type="xsd:string" use="optional" />
+			<attribute name="css-style" type="xsd:string" use="optional" />
+			<attribute name="style" type="xsd:NMTOKEN" use="optional" />
+			<attribute name="exstyle" type="xsd:NMTOKEN" use="optional" />
+			<attribute name="phase-name" type="xsd:NMTOKEN" use="optional" />
+			<attribute default="proposal" name="alttranstype" type="xlf:AttrType_alttranstype" use="optional" />
+			<anyAttribute namespace="##other" processContents="strict" />
+		</complexType>
+		<unique name="U_at_segsrc_mid">
+			<selector xpath="./xlf:seg-source/xlf:mrk" />
+			<field xpath="@mid" />
+		</unique>
+		<keyref name="KR_at_segsrc_mid" refer="xlf:U_at_segsrc_mid">
+			<selector xpath="./xlf:target/xlf:mrk" />
+			<field xpath="@mid" />
+		</keyref>
+	</element>
+	<element name="bin-unit">
+		<complexType>
+			<sequence>
+				<element ref="xlf:bin-source" />
+				<element minOccurs="0" ref="xlf:bin-target" />
+				<choice maxOccurs="unbounded" minOccurs="0">
+					<element ref="xlf:context-group" />
+					<element ref="xlf:count-group" />
+					<element ref="xlf:note" />
+					<element ref="xlf:trans-unit" />
+				</choice>
+				<any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="strict" />
+			</sequence>
+			<attribute name="id" type="xsd:string" use="required" />
+			<attribute name="mime-type" type="xlf:mime-typeValueList" use="required" />
+			<attribute name="approved" type="xlf:AttrType_YesNo" use="optional" />
+			<attribute default="yes" name="translate" type="xlf:AttrType_YesNo" use="optional" />
+			<attribute default="yes" name="reformat" type="xlf:AttrType_reformat" use="optional" />
+			<attribute name="restype" type="xlf:AttrType_restype" use="optional" />
+			<attribute name="resname" type="xsd:string" use="optional" />
+			<attribute name="phase-name" type="xsd:string" use="optional" />
+			<anyAttribute namespace="##other" processContents="strict" />
+		</complexType>
+	</element>
+	<element name="bin-source">
+		<complexType>
+			<choice>
+				<element ref="xlf:internal-file" />
+				<element ref="xlf:external-file" />
+			</choice>
+			<anyAttribute namespace="##other" processContents="strict" />
+		</complexType>
+	</element>
+	<element name="bin-target">
+		<complexType>
+			<choice>
+				<element ref="xlf:internal-file" />
+				<element ref="xlf:external-file" />
+			</choice>
+			<attribute name="mime-type" type="xlf:mime-typeValueList" use="optional" />
+			<attribute name="state" type="xlf:AttrType_state" use="optional" />
+			<attribute name="state-qualifier" type="xlf:AttrType_state-qualifier" use="optional" />
+			<attribute name="phase-name" type="xsd:NMTOKEN" use="optional" />
+			<attribute name="restype" type="xlf:AttrType_restype" use="optional" />
+			<attribute name="resname" type="xsd:string" use="optional" />
+			<anyAttribute namespace="##other" processContents="strict" />
+		</complexType>
+	</element>
+	<!-- Element for inline codes -->
+	<element name="g">
+		<complexType mixed="true">
+			<group maxOccurs="unbounded" minOccurs="0" ref="xlf:ElemGroup_TextContent" />
+			<attribute name="ctype" type="xlf:AttrType_InlineDelimiters" use="optional" />
+			<attribute default="yes" name="clone" type="xlf:AttrType_YesNo" use="optional" />
+			<attributeGroup ref="xlf:AttrGroup_TextContent" />
+		</complexType>
+	</element>
+	<element name="x">
+		<complexType>
+			<attribute name="ctype" type="xlf:AttrType_InlinePlaceholders" use="optional" />
+			<attribute default="yes" name="clone" type="xlf:AttrType_YesNo" use="optional" />
+			<attributeGroup ref="xlf:AttrGroup_TextContent" />
+		</complexType>
+	</element>
+	<element name="bx">
+		<complexType>
+			<attribute name="rid" type="xsd:NMTOKEN" use="optional" />
+			<attribute name="ctype" type="xlf:AttrType_InlineDelimiters" use="optional" />
+			<attribute default="yes" name="clone" type="xlf:AttrType_YesNo" use="optional" />
+			<attributeGroup ref="xlf:AttrGroup_TextContent" />
+		</complexType>
+	</element>
+	<element name="ex">
+		<complexType>
+			<attribute name="rid" type="xsd:NMTOKEN" use="optional" />
+			<attributeGroup ref="xlf:AttrGroup_TextContent" />
+		</complexType>
+	</element>
+	<element name="ph">
+		<complexType mixed="true">
+			<sequence maxOccurs="unbounded" minOccurs="0">
+				<element ref="xlf:sub" />
+			</sequence>
+			<attribute name="ctype" type="xlf:AttrType_InlinePlaceholders" use="optional" />
+			<attribute name="crc" type="xsd:string" use="optional" />
+			<attribute name="assoc" type="xlf:AttrType_assoc" use="optional" />
+			<attributeGroup ref="xlf:AttrGroup_TextContent" />
+		</complexType>
+	</element>
+	<element name="bpt">
+		<complexType mixed="true">
+			<sequence maxOccurs="unbounded" minOccurs="0">
+				<element ref="xlf:sub" />
+			</sequence>
+			<attribute name="rid" type="xsd:NMTOKEN" use="optional" />
+			<attribute name="ctype" type="xlf:AttrType_InlineDelimiters" use="optional" />
+			<attribute name="crc" type="xsd:string" use="optional" />
+			<attributeGroup ref="xlf:AttrGroup_TextContent" />
+		</complexType>
+	</element>
+	<element name="ept">
+		<complexType mixed="true">
+			<sequence maxOccurs="unbounded" minOccurs="0">
+				<element ref="xlf:sub" />
+			</sequence>
+			<attribute name="rid" type="xsd:NMTOKEN" use="optional" />
+			<attribute name="crc" type="xsd:string" use="optional" />
+			<attributeGroup ref="xlf:AttrGroup_TextContent" />
+		</complexType>
+	</element>
+	<element name="it">
+		<complexType mixed="true">
+			<sequence maxOccurs="unbounded" minOccurs="0">
+				<element ref="xlf:sub" />
+			</sequence>
+			<attribute name="pos" type="xlf:AttrType_Position" use="required" />
+			<attribute name="rid" type="xsd:NMTOKEN" use="optional" />
+			<attribute name="ctype" type="xlf:AttrType_InlineDelimiters" use="optional" />
+			<attribute name="crc" type="xsd:string" use="optional" />
+			<attributeGroup ref="xlf:AttrGroup_TextContent" />
+		</complexType>
+	</element>
+	<element name="sub">
+		<complexType mixed="true">
+			<group maxOccurs="unbounded" minOccurs="0" ref="xlf:ElemGroup_TextContent" />
+			<attribute name="datatype" type="xlf:AttrType_datatype" use="optional" />
+			<attribute name="ctype" type="xlf:AttrType_InlineDelimiters" use="optional" />
+			<attribute name="xid" type="xsd:string" use="optional" />
+		</complexType>
+	</element>
+	<element name="mrk">
+		<complexType mixed="true">
+			<group maxOccurs="unbounded" minOccurs="0" ref="xlf:ElemGroup_TextContent" />
+			<attribute name="mtype" type="xlf:AttrType_mtype" use="required" />
+			<attribute name="mid" type="xsd:NMTOKEN" use="optional" />
+			<attribute name="comment" type="xsd:string" use="optional" />
+			<anyAttribute namespace="##other" processContents="strict" />
+		</complexType>
+	</element>
+</schema>
