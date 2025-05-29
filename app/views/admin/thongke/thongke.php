@@ -1,3 +1,4 @@
+<!-- Đây là trang thống kê -->
 <div id="wrapper">
     <div class="content-page">
         <div class="content">
